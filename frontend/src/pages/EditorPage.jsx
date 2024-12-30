@@ -5,7 +5,6 @@ import { toast } from "react-hot-toast";
 
 function EditorPage({ socket, roomId, setRoomId, setUserName, users }) {
   const navigate = useNavigate();
-  const [loading, setLoading] = React.useState(false);
   const [language, setLanguage] = useState("javascript");
   const [typing, setTyping] = useState("");
   const [outPut, setOutPut] = useState("");
@@ -26,8 +25,9 @@ function EditorPage({ socket, roomId, setRoomId, setUserName, users }) {
     toast.success("Room ID copied to clipboard");
   };
 
-  const runCode = () => {
-    socket.emit("compileCode", { code, roomId, language, version });
+  const runCode = async () => {
+    setOutPut("Running Code...");
+    await socket.emit("compileCode", { code, roomId, language, version });
   };
 
   const handleCodeChange = (newCode) => {
@@ -112,16 +112,14 @@ function EditorPage({ socket, roomId, setRoomId, setUserName, users }) {
             fontSize: 14,
           }}
         />
-        <button className="run-btn" onClick={runCode}>
-          Execute
-        </button>
+          <button className="run-btn" onClick={runCode}>
+            Execute
+          </button>
         <textarea
           className="output-console"
           value={outPut}
           readOnly
-          placeholder={
-            loading ? "Running code..." : "Output will appear here..."
-          }
+          placeholder="Output will appear here..."
         />
       </div>
     </div>
