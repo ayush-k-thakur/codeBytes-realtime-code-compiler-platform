@@ -1,7 +1,29 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { v4 as uuidV4 } from "uuid";
+import { toast } from "react-hot-toast";
 import logo from "../assets/logo.png";
 
-function HomePage({roomId,setRoomId, userName, setUserName, joinRoom, createNewRoom}) {
+function HomePage({ socket, roomId, setRoomId, userName, setUserName }) {
+  const navigate = useNavigate();
+  
+  const createNewRoom = (e) => {
+    e.preventDefault();
+    const id = uuidV4();
+    setRoomId(id);
+    toast.success("New Room Created");
+  };
+
+  const joinRoom = () => {
+    if (roomId == "" || userName == "") {
+      toast.error("Valid Room ID and Username required");
+      return;
+    }
+    socket.emit("join", { roomId, userName });
+    toast.success("Joined the room");
+    navigate("/editor");
+  };
+
   return (
     <div className="homePageWrapper">
       <div className="formWrapper">

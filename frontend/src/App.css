@@ -103,12 +103,6 @@
   transition: all 0.3s ease-in-out;
 }
 
-.createNewBtn:hover,
-footer a:hover {
-  color: #368654;
-  border-color: #368654;
-}
-
 .mainWrap {
   display: grid;
   grid-template-columns: 230px 1fr;

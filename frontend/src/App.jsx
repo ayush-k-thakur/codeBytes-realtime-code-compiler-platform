@@ -1,53 +1,25 @@
 import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import io from "socket.io-client";
-import { v4 as uuidV4 } from "uuid";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import EditorPage from "./pages/EditorPage";
 import HomePage from "./pages/HomePage";
 
 const socket = io("http://localhost:5000");
 
 const App = () => {
-  const [joined, setJoined] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [userName, setUserName] = useState("");
-  const [language, setLanguage] = useState("javascript");
-  const [code, setCode] = useState("// start code here");
   const [users, setUsers] = useState([]);
-  const [typing, setTyping] = useState("");
-  const [outPut, setOutPut] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [version, setVersion] = useState("*");
 
   useEffect(() => {
     socket.on("userJoined", (users) => {
       setUsers(users);
     });
 
-    socket.on("codeUpdate", (newCode) => {
-      setCode(newCode);
-    });
-
-    socket.on("userTyping", (user) => {
-      setTyping(`${user.slice(0, 8)}... is Typing`);
-      setTimeout(() => setTyping(""), 2000);
-    });
-
-    socket.on("languageUpdate", (newLanguage) => {
-      setLanguage(newLanguage);
-    });
-
-    socket.on("codeResponse", (response) => {
-      setOutPut(response.run.output);
-    });
-
     return () => {
       socket.off("userJoined");
-      socket.off("codeUpdate");
-      socket.off("userTyping");
-      socket.off("languageUpdate");
-      socket.off("codeResponse");
     };
   }, []);
 
@@ -63,94 +35,37 @@ const App = () => {
     };
   }, []);
 
-  const createNewRoom = (e) => {
-    e.preventDefault();
-    const id = uuidV4();
-    setRoomId(id);
-    toast.success("New Room Created");
-  };
-
-  const joinRoom = () => {
-    if (roomId == "" || userName == "") {
-      toast.error("Valid Room ID and Username required");
-      return;
-    }
-    if (roomId && userName) {
-      socket.emit("join", { roomId, userName });
-      setJoined(true);
-      toast.success("Joined the room");
-      // alert("Joined the room");
-    }
-  };
-
-  const leaveRoom = () => {
-    socket.emit("leaveRoom");
-    setJoined(false);
-    setRoomId("");
-    setUserName("");
-    setCode("// start code here");
-    setLanguage("javascript");
-  };
-
-  const copyRoomId = () => {
-    navigator.clipboard.writeText(roomId);
-    toast.success("Room ID copied to clipboard");
-  };
-
-  const handleCodeChange = (newCode) => {
-    setCode(newCode);
-    socket.emit("codeChange", { roomId, code: newCode });
-    socket.emit("typing", { roomId, userName });
-  };
-
-  const handleLanguageChange = (e) => {
-    const newLanguage = e.target.value;
-    setLanguage(newLanguage);
-    socket.emit("languageChange", { roomId, language: newLanguage });
-  };
-
-  const handleLoading = (value) => {
-    setLoading(!loading);
-  };
-
-  const runCode = () => {
-    socket.emit("compileCode", { code, roomId, language, version });
-  };
-
-  if (!joined) {
-    return (
-      <div>
-        <Toaster />
-        <HomePage
-          roomId={roomId}
-          setRoomId={setRoomId}
-          userName={userName}
-          setUserName={setUserName}
-          joinRoom={joinRoom}
-          createNewRoom={createNewRoom}
-        />
-      </div>
-    );
-  }
-
   return (
     <div>
-      <Toaster />
-      <EditorPage
-        roomId={roomId}
-        copyRoomId={copyRoomId}
-        users={users}
-        typing={typing}
-        language={language}
-        handleLanguageChange={handleLanguageChange}
-        code={code}
-        handleCodeChange={handleCodeChange}
-        leaveRoom={leaveRoom}
-        runCode={runCode}
-        outPut={outPut}
-        loading={loading}
-        setLoading={setLoading}
-      />
+      <Router>
+        <Toaster />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <HomePage
+                socket={socket}
+                roomId={roomId}
+                setRoomId={setRoomId}
+                userName={userName}
+                setUserName={setUserName}
+              />
+            }
+          />
+          <Route
+            path="/editor"
+            element={
+              <EditorPage
+                socket={socket}
+                roomId={roomId}
+                setRoomId={setRoomId}
+                setUserName={setUserName}
+                users={users}
+              />
+            }
+          />
+        </Routes>
+      </Router>
     </div>
   );
 };
