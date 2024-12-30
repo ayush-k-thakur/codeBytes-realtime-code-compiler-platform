@@ -8,7 +8,7 @@ const app = express();
 
 const server = http.createServer(app);
 
-const url = `https://realtime-code-editor-final.onrender.com`;
+const url = `http://localhost:${process.env.PORT || 5000}`;
 const interval = 30000;
 
 function reloadWebsite() {
@@ -57,6 +57,10 @@ io.on("connection", (socket) => {
     rooms.get(roomId).add(userName);
 
     io.to(roomId).emit("userJoined", Array.from(rooms.get(currentRoom)));
+
+    // socket.on("codeChange", ({ roomId, code }) => {
+    //   socket.to(roomId).emit("codeUpdate", code);
+    // });
   });
 
   socket.on("codeChange", ({ roomId, code }) => {
