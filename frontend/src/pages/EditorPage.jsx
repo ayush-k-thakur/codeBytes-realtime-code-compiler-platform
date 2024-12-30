@@ -4,7 +4,6 @@ import Editor from "@monaco-editor/react";
 function EditorPage({
   roomId,
   copyRoomId,
-  copySuccess,
   users,
   typing,
   language,
@@ -25,12 +24,11 @@ function EditorPage({
             <button onClick={copyRoomId} className="copy-button">
               Copy Room Id
             </button>
-            {copySuccess && <span className="copy-success">{copySuccess}</span>}
           </div>
           <h3>Users in Room:</h3>
           <ul>
             {users.map((user, index) => (
-              <li key={index}>{user.slice(0, 8)}...</li>
+              <li key={index}>{user}</li>
             ))}
           </ul>
           <p className="typing-indicator">{typing}</p>

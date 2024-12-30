@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import io from "socket.io-client";
 import { v4 as uuidV4 } from "uuid";
-import { toast } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import EditorPage from "./pages/EditorPage";
 import HomePage from "./pages/HomePage";
 
@@ -14,7 +14,6 @@ const App = () => {
   const [userName, setUserName] = useState("");
   const [language, setLanguage] = useState("javascript");
   const [code, setCode] = useState("// start code here");
-  const [copySuccess, setCopySuccess] = useState("");
   const [users, setUsers] = useState([]);
   const [typing, setTyping] = useState("");
   const [outPut, setOutPut] = useState("");
@@ -68,17 +67,18 @@ const App = () => {
     e.preventDefault();
     const id = uuidV4();
     setRoomId(id);
-    toast.success("Created a new room");
+    toast.success("New Room Created");
   };
 
   const joinRoom = () => {
-    if (roomId === "" || userName === "") {
-      alert("Please enter a valid Room ID and Username");
+    if (roomId == "" || userName == "") {
+      toast.error("Valid Room ID and Username required");
       return;
     }
     if (roomId && userName) {
       socket.emit("join", { roomId, userName });
       setJoined(true);
+      toast.success("Joined the room");
       // alert("Joined the room");
     }
   };
@@ -94,7 +94,7 @@ const App = () => {
 
   const copyRoomId = () => {
     navigator.clipboard.writeText(roomId);
-    setTimeout(() => setCopySuccess(""), 2000);
+    toast.success("Room ID copied to clipboard");
   };
 
   const handleCodeChange = (newCode) => {
@@ -119,23 +119,26 @@ const App = () => {
 
   if (!joined) {
     return (
-      <HomePage
-        roomId={roomId}
-        setRoomId={setRoomId}
-        userName={userName}
-        setUserName={setUserName}
-        joinRoom={joinRoom}
-        createNewRoom={createNewRoom}
-      />
+      <div>
+        <Toaster />
+        <HomePage
+          roomId={roomId}
+          setRoomId={setRoomId}
+          userName={userName}
+          setUserName={setUserName}
+          joinRoom={joinRoom}
+          createNewRoom={createNewRoom}
+        />
+      </div>
     );
   }
 
   return (
     <div>
+      <Toaster />
       <EditorPage
         roomId={roomId}
         copyRoomId={copyRoomId}
-        copySuccess={copySuccess}
         users={users}
         typing={typing}
         language={language}

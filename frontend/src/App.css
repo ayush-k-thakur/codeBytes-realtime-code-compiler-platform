@@ -214,12 +214,18 @@ footer a:hover {
     }
     ul {
       list-style: none;
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
       li {
         padding: 0.5rem;
         font-size: 0.9rem;
         background: gray;
         margin-top: 5px;
         border-radius: 5px;
+        min-width: 100px;
+        text-align: center;
+        color: black;
       }
     }
 
@@ -273,7 +279,7 @@ footer a:hover {
   border: none;
   margin: 5px 10px;
   border-radius: 5%;
-  font-weight: bolder;
+  font-weight: 500;
   font-size: 105%;
 }
 
