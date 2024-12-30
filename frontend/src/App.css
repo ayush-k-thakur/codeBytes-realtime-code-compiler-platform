@@ -268,13 +268,22 @@
 
 .run-btn {
   background-color: rgb(12, 209, 38);
-  padding: 10px 25px;
+  padding: 6px 20px;
   cursor: pointer;
   border: none;
   margin: 5px 10px;
-  border-radius: 5%;
-  font-weight: 500;
-  font-size: 105%;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.download-btn {
+  background-color: #3498db;
+  padding: 6px 20px;
+  cursor: pointer;
+  border: none;
+  margin: 5px 10px;
+  border-radius: 10px;
+  font-size: 1rem;
 }
 
 .output-console {

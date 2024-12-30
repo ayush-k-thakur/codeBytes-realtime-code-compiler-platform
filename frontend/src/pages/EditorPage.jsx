@@ -39,7 +39,18 @@ function EditorPage({ socket, roomId, setRoomId, setUserName, users }) {
   const handleLanguageChange = (e) => {
     const newLanguage = e.target.value;
     setLanguage(newLanguage);
+    console.log(newLanguage);
     socket.emit("languageChange", { roomId, language: newLanguage });
+  };
+
+  const handleDownloadCode = () => {
+    const blob = new Blob([code], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "code.txt";
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   useEffect(() => {
@@ -112,9 +123,12 @@ function EditorPage({ socket, roomId, setRoomId, setUserName, users }) {
             fontSize: 14,
           }}
         />
-          <button className="run-btn" onClick={runCode}>
-            Execute
-          </button>
+        <button className="run-btn" onClick={runCode}>
+          Execute
+        </button>
+        <button className="download-btn" onClick={handleDownloadCode}>
+          Download Code
+        </button>
         <textarea
           className="output-console"
           value={outPut}

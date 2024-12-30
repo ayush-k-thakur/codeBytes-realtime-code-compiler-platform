@@ -14,12 +14,12 @@ const interval = 30000;
 function reloadWebsite() {
   axios
     .get(url)
-    .then((response) => {
-      console.log("website reloded");
-    })
-    .catch((error) => {
-      console.error(`Error : ${error.message}`);
-    });
+    // .then((response) => {
+    //   console.log("website reloded");
+    // })
+    // .catch((error) => {
+    //   console.error(`Error : ${error.message}`);
+    // });
 }
 
 setInterval(reloadWebsite, interval);
@@ -33,7 +33,7 @@ const io = new Server(server, {
 const rooms = new Map();
 
 io.on("connection", (socket) => {
-  console.log("User Connected", socket.id);
+  // console.log("User Connected", socket.id);
 
   let currentRoom = null;
   let currentUser = null;
@@ -57,7 +57,6 @@ io.on("connection", (socket) => {
     rooms.get(roomId).add(userName);
 
     io.to(roomId).emit("userJoined", Array.from(rooms.get(currentRoom)));
-    toast
   });
 
   socket.on("codeChange", ({ roomId, code }) => {
@@ -110,7 +109,7 @@ io.on("connection", (socket) => {
       rooms.get(currentRoom).delete(currentUser);
       io.to(currentRoom).emit("userJoined", Array.from(rooms.get(currentRoom)));
     }
-    console.log("user Disconnected");
+    // console.log("user Disconnected");
   });
 });
 
